@@ -1,7 +1,7 @@
 """
 Основной класс для пикселизации изображений.
 """
-import os
+
 from typing import Dict, List, Optional, Tuple, Union
 from pathlib import Path
 from PIL import Image, ImageDraw
@@ -23,15 +23,12 @@ from .constants import (
     MAX_SCALE_FACTOR,
 )
 from .exceptions import (
-    FileOperationError,
     ImageProcessingError,
-    InvalidColorError,
     InvalidGridSizeError,
     InvalidImageFormatError,
     InvalidParameterError,
 )
 from .utils import (
-    get_format_settings,
     get_palette_from_image,
     get_preset_palette,
     save_image,
@@ -51,7 +48,7 @@ class Pixelizer:
         num_colors: int = DEFAULT_NUM_COLORS,
         scale_factor: int = DEFAULT_SCALE_FACTOR,
         background_color: Optional[Tuple[int, int, int]] = None,
-        pixelization_algorithm: str = 'nearest',
+        pixelization_algorithm: str = "nearest",
         palette_algorithm: str = DEFAULT_PALETTE_ALGORITHM,
         custom_palette: Optional[List[Tuple[int, int, int]]] = None,
     ):
@@ -73,14 +70,20 @@ class Pixelizer:
             InvalidParameterError: Если параметры вне допустимого диапазона
         """
         if grid_size not in VALID_GRID_SIZES:
-            raise InvalidGridSizeError(f"grid_size должен быть одним из: {VALID_GRID_SIZES}")
-        
+            raise InvalidGridSizeError(
+                f"grid_size должен быть одним из: {VALID_GRID_SIZES}"
+            )
+
         if not MIN_NUM_COLORS <= num_colors <= MAX_NUM_COLORS:
-            raise InvalidParameterError(f"num_colors должен быть в диапазоне от {MIN_NUM_COLORS} до {MAX_NUM_COLORS}")
-        
+            raise InvalidParameterError(
+                f"num_colors должен быть в диапазоне от {MIN_NUM_COLORS} до {MAX_NUM_COLORS}"
+            )
+
         if not MIN_SCALE_FACTOR <= scale_factor <= MAX_SCALE_FACTOR:
-            raise InvalidParameterError(f"scale_factor должен быть в диапазоне от {MIN_SCALE_FACTOR} до {MAX_SCALE_FACTOR}")
-        
+            raise InvalidParameterError(
+                f"scale_factor должен быть в диапазоне от {MIN_SCALE_FACTOR} до {MAX_SCALE_FACTOR}"
+            )
+
         self.grid_size = grid_size
         self.grid_color = grid_color
         self.num_colors = num_colors
@@ -114,33 +117,47 @@ class Pixelizer:
         """
         image_path = validate_image_path(image_path)
         output_path = Path(output_path)
-        
+
         # Проверяем формат выходного файла
         if output_path.suffix.lower() not in SUPPORTED_FORMATS:
-            raise InvalidImageFormatError(f"Неподдерживаемый формат файла: {output_path.suffix}")
+            raise InvalidImageFormatError(
+                f"Неподдерживаемый формат файла: {output_path.suffix}"
+            )
 
         try:
             # Загрузка и предобработка изображения
             img = Image.open(image_path).convert("RGB")
             size = min(img.width, img.height)
             img = img.crop((0, 0, size, size))
-            
+
             # Пикселизация
-            img = img.resize((self.grid_size, self.grid_size), self.pixelization_algorithm)
-            
+            img = img.resize(
+                (self.grid_size, self.grid_size), self.pixelization_algorithm
+            )
+
             # Применение палитры
             if preset_palette:
                 palette = get_preset_palette(preset_palette)
-                img = img.quantize(colors=len(palette), method=Image.Quantize.MEDIANCUT).convert("RGB")
+                img = img.quantize(
+                    colors=len(palette), method=Image.Quantize.MEDIANCUT
+                ).convert("RGB")
             elif self.custom_palette:
-                img = img.quantize(colors=len(self.custom_palette), method=Image.Quantize.MEDIANCUT).convert("RGB")
+                img = img.quantize(
+                    colors=len(self.custom_palette), method=Image.Quantize.MEDIANCUT
+                ).convert("RGB")
             else:
-                img = img.quantize(colors=self.num_colors, method=PALETTE_ALGORITHMS[self.palette_algorithm]).convert("RGB")
+                img = img.quantize(
+                    colors=self.num_colors,
+                    method=PALETTE_ALGORITHMS[self.palette_algorithm],
+                ).convert("RGB")
 
             # Создание увеличенной версии с сеткой
             pixelated_img = img.resize(
-                (self.grid_size * self.scale_factor, self.grid_size * self.scale_factor),
-                self.pixelization_algorithm
+                (
+                    self.grid_size * self.scale_factor,
+                    self.grid_size * self.scale_factor,
+                ),
+                self.pixelization_algorithm,
             )
 
             # Создание нового изображения с фоном
@@ -158,7 +175,7 @@ class Pixelizer:
 
             # Сохранение результата
             save_image(pixelated_img, output_path)
-            
+
             return get_palette_from_image(img)
 
         except Exception as e:

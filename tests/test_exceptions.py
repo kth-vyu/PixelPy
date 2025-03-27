@@ -1,9 +1,6 @@
 """
 Тесты для пользовательских исключений библиотеки PixelPy.
 """
-from typing import Dict
-
-import pytest
 
 from pixelpy import (
     FileOperationError,
@@ -12,6 +9,11 @@ from pixelpy import (
     InvalidGridSizeError,
     InvalidImageFormatError,
     InvalidParameterError,
+)
+
+import pytest
+
+from pixelpy import (
     PixelPyError,
 )
 
@@ -100,4 +102,4 @@ def test_error_hierarchy():
     assert issubclass(ImageProcessingError, PixelPyError)
     assert issubclass(InvalidColorError, PixelPyError)
     assert issubclass(InvalidParameterError, PixelPyError)
-    assert issubclass(FileOperationError, PixelPyError) 
+    assert issubclass(FileOperationError, PixelPyError)

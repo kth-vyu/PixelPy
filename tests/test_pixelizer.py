@@ -1,6 +1,7 @@
 """
 Тесты для основного класса Pixelizer.
 """
+
 import os
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -42,8 +43,8 @@ def custom_pixelizer():
         num_colors=16,
         scale_factor=30,
         background_color=(255, 255, 255),
-        pixelization_algorithm='lanczos',
-        palette_algorithm='web'
+        pixelization_algorithm="lanczos",
+        palette_algorithm="web",
     )
 
 
@@ -66,7 +67,7 @@ class TestPixelizerInitialization:
             grid_color=(255, 0, 0),
             num_colors=16,
             scale_factor=30,
-            background_color=(0, 0, 0)
+            background_color=(0, 0, 0),
         )
         assert pixelizer.grid_size == 16
         assert pixelizer.grid_color == (255, 0, 0)
@@ -97,17 +98,17 @@ class TestPixelizerBasicOperations:
         """Тест базовой пикселизации."""
         output_path = output_dir / "basic_output.png"
         palette = pixelizer.pixelize(input_image, output_path)
-        
+
         assert output_path.exists()
         assert isinstance(palette, dict)
         assert all(isinstance(color, str) for color in palette.values())
-        assert all(color.startswith('#') for color in palette.values())
+        assert all(color.startswith("#") for color in palette.values())
 
     def test_custom_pixelization(self, custom_pixelizer, input_image, output_dir):
         """Тест пикселизации с пользовательскими настройками."""
         output_path = output_dir / "custom_output.png"
         palette = custom_pixelizer.pixelize(input_image, output_path)
-        
+
         assert output_path.exists()
         assert isinstance(palette, dict)
         assert len(palette) <= custom_pixelizer.num_colors
@@ -128,11 +129,13 @@ class TestPixelizerPalettes:
 
     def test_preset_palettes(self, pixelizer, input_image, output_dir):
         """Тест использования предустановленных палитр."""
-        palettes = ['retro', 'pastel', 'monochrome']
+        palettes = ["retro", "pastel", "monochrome"]
         for palette_name in palettes:
             output_path = output_dir / f"palette_{palette_name}.png"
-            palette = pixelizer.pixelize(input_image, output_path, preset_palette=palette_name)
-            
+            palette = pixelizer.pixelize(
+                input_image, output_path, preset_palette=palette_name
+            )
+
             assert output_path.exists()
             assert isinstance(palette, dict)
             assert len(palette) <= pixelizer.num_colors
@@ -140,14 +143,16 @@ class TestPixelizerPalettes:
     def test_custom_palette(self, input_image, output_dir):
         """Тест использования пользовательской палитры."""
         custom_palette = [
-            (0, 0, 0), (255, 255, 255),
-            (255, 0, 0), (0, 255, 0),
-            (0, 0, 255)
+            (0, 0, 0),
+            (255, 255, 255),
+            (255, 0, 0),
+            (0, 255, 0),
+            (0, 0, 255),
         ]
         pixelizer = Pixelizer(custom_palette=custom_palette)
         output_path = output_dir / "custom_palette_output.png"
         palette = pixelizer.pixelize(input_image, output_path)
-        
+
         assert output_path.exists()
         assert len(palette) <= len(custom_palette)
 
@@ -157,23 +162,23 @@ class TestPixelizerAlgorithms:
 
     def test_pixelization_algorithms(self, input_image, output_dir):
         """Тест различных алгоритмов пикселизации."""
-        algorithms = ['nearest', 'bilinear', 'bicubic', 'lanczos']
+        algorithms = ["nearest", "bilinear", "bicubic", "lanczos"]
         for algorithm in algorithms:
             pixelizer = Pixelizer(pixelization_algorithm=algorithm)
             output_path = output_dir / f"algorithm_{algorithm}.png"
             palette = pixelizer.pixelize(input_image, output_path)
-            
+
             assert output_path.exists()
             assert isinstance(palette, dict)
 
     def test_palette_algorithms(self, input_image, output_dir):
         """Тест различных алгоритмов создания палитры."""
-        algorithms = ['adaptive', 'web']
+        algorithms = ["adaptive", "web"]
         for algorithm in algorithms:
             pixelizer = Pixelizer(palette_algorithm=algorithm)
             output_path = output_dir / f"palette_algorithm_{algorithm}.png"
             palette = pixelizer.pixelize(input_image, output_path)
-            
+
             assert output_path.exists()
             assert isinstance(palette, dict)
 
@@ -186,7 +191,7 @@ class TestPixelizerEdgeCases:
         pixelizer = Pixelizer(grid_size=8)
         output_path = output_dir / "min_grid_output.png"
         palette = pixelizer.pixelize(input_image, output_path)
-        
+
         assert output_path.exists()
         assert isinstance(palette, dict)
 
@@ -195,7 +200,7 @@ class TestPixelizerEdgeCases:
         pixelizer = Pixelizer(grid_size=128)
         output_path = output_dir / "max_grid_output.png"
         palette = pixelizer.pixelize(input_image, output_path)
-        
+
         assert output_path.exists()
         assert isinstance(palette, dict)
 
@@ -204,7 +209,7 @@ class TestPixelizerEdgeCases:
         pixelizer = Pixelizer(num_colors=2)
         output_path = output_dir / "min_colors_output.png"
         palette = pixelizer.pixelize(input_image, output_path)
-        
+
         assert output_path.exists()
         assert len(palette) <= 2
 
@@ -213,7 +218,7 @@ class TestPixelizerEdgeCases:
         pixelizer = Pixelizer(num_colors=256)
         output_path = output_dir / "max_colors_output.png"
         palette = pixelizer.pixelize(input_image, output_path)
-        
+
         assert output_path.exists()
         assert len(palette) <= 256
 
@@ -224,36 +229,30 @@ class TestPixelizerImageProcessing:
     def test_square_image(self, pixelizer, input_image, output_dir):
         """Тест обработки квадратного изображения."""
         output_path = output_dir / "square_output.png"
-        palette = pixelizer.pixelize(input_image, output_path)
-        
+        pixelizer.pixelize(input_image, output_path)
+
         img = Image.open(output_path)
-        assert img.width == img.height
+        assert img.size[0] == img.size[1]
+        assert img.size[0] == pixelizer.grid_size * pixelizer.scale_factor
 
     def test_background_color(self, input_image, output_dir):
         """Тест применения цвета фона."""
         pixelizer = Pixelizer(background_color=(0, 0, 0))
         output_path = output_dir / "background_output.png"
-        palette = pixelizer.pixelize(input_image, output_path)
-        
+        pixelizer.pixelize(input_image, output_path)
+
         img = Image.open(output_path)
-        assert img.mode == 'RGB'
+        assert img.getpixel((0, 0)) == (0, 0, 0)
 
     def test_grid_color(self, input_image, output_dir):
         """Тест применения цвета сетки."""
         grid_color = (255, 0, 0)
         pixelizer = Pixelizer(grid_color=grid_color)
         output_path = output_dir / "grid_color_output.png"
-        palette = pixelizer.pixelize(input_image, output_path)
-        
+        pixelizer.pixelize(input_image, output_path)
+
         img = Image.open(output_path)
-        # Проверяем наличие красных линий сетки
-        pixels = img.load()
-        has_red_grid = False
-        for x in range(0, img.width, 20):
-            if pixels[x, 0] == grid_color:
-                has_red_grid = True
-                break
-        assert has_red_grid
+        assert img.getpixel((pixelizer.scale_factor, 0)) == grid_color
 
 
 class TestPixelizerUtils:
@@ -261,9 +260,9 @@ class TestPixelizerUtils:
 
     def test_rgb_to_hex(self):
         """Тест конвертации RGB в HEX."""
-        assert rgb_to_hex((255, 0, 0)) == '#ff0000'
-        assert rgb_to_hex((0, 255, 0)) == '#00ff00'
-        assert rgb_to_hex((0, 0, 255)) == '#0000ff'
+        assert rgb_to_hex((255, 0, 0)) == "#ff0000"
+        assert rgb_to_hex((0, 255, 0)) == "#00ff00"
+        assert rgb_to_hex((0, 0, 255)) == "#0000ff"
 
     def test_invalid_rgb(self):
         """Тест обработки некорректных RGB значений."""
@@ -277,4 +276,4 @@ class TestPixelizerUtils:
         palette = get_palette_from_image(input_image)
         assert isinstance(palette, dict)
         assert all(isinstance(color, str) for color in palette.values())
-        assert all(color.startswith('#') for color in palette.values()) 
+        assert all(color.startswith("#") for color in palette.values())

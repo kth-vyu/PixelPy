@@ -1,6 +1,7 @@
 """
 Утилиты для работы с изображениями и цветами.
 """
+
 from typing import Dict, List, Tuple, Union
 from pathlib import Path
 from PIL import Image
@@ -41,7 +42,7 @@ def rgb_to_hex(rgb: Tuple[int, int, int]) -> str:
     """
     if not all(0 <= x <= 255 for x in rgb):
         raise InvalidColorError("Значения RGB должны быть в диапазоне [0, 255]")
-    return '#{:02x}{:02x}{:02x}'.format(*rgb)
+    return "#{:02x}{:02x}{:02x}".format(*rgb)
 
 
 def hex_to_rgb(hex_color: str) -> Tuple[int, int, int]:
@@ -57,11 +58,11 @@ def hex_to_rgb(hex_color: str) -> Tuple[int, int, int]:
     Raises:
         InvalidColorError: Если HEX-строка некорректна
     """
-    hex_color = hex_color.lstrip('#')
+    hex_color = hex_color.lstrip("#")
     if len(hex_color) != 6:
         raise InvalidColorError("HEX-строка должна содержать 6 символов")
     try:
-        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))
     except ValueError:
         raise InvalidColorError("Некорректный формат HEX-строки")
 
@@ -238,4 +239,4 @@ def save_image(image: Image.Image, path: Union[str, Path], **kwargs) -> None:
         format_settings.update(kwargs)
         image.save(path, **format_settings)
     except Exception as e:
-        raise FileOperationError(f"Ошибка при сохранении изображения: {str(e)}") 
+        raise FileOperationError(f"Ошибка при сохранении изображения: {str(e)}")

@@ -29,7 +29,6 @@ __email__ = "kozyreva.k1@ya.ru"
 __all__ = [
     # Основные классы
     "Pixelizer",
-    
     # Утилиты
     "get_palette_from_image",
     "get_format_settings",
@@ -38,7 +37,6 @@ __all__ = [
     "get_palette_algorithm",
     "rgb_to_hex",
     "hex_to_rgb",
-    
     # Исключения
     "PixelPyError",
     "InvalidGridSizeError",
@@ -47,4 +45,4 @@ __all__ = [
     "InvalidColorError",
     "InvalidParameterError",
     "FileOperationError",
-] 
+]

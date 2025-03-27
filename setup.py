@@ -45,4 +45,4 @@ setup(
         "Documentation": "https://github.com/kth-vyu/PixelPy#readme",
         "Source Code": "https://github.com/kth-vyu/PixelPy",
     },
-) 
+)
