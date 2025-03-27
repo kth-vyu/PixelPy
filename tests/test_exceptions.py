@@ -9,11 +9,6 @@ from pixelpy import (
     InvalidGridSizeError,
     InvalidImageFormatError,
     InvalidParameterError,
-)
-
-import pytest
-
-from pixelpy import (
     PixelPyError,
 )
 

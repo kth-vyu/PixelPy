@@ -2,16 +2,12 @@
 Тесты для основного класса Pixelizer.
 """
 
-import os
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 import pytest
 from PIL import Image
 
 from pixelpy import (
-    FileOperationError,
-    ImageProcessingError,
     InvalidColorError,
     InvalidGridSizeError,
     InvalidImageFormatError,
